@@ -1,6 +1,6 @@
 {
   "name": "react-liquid-gauge-chart",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "dist/react-liquid-gauge-chart.umd.js",
   "module": "dist/react-liquid-gauge-chart.es.js",
