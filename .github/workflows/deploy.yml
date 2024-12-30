@@ -1,41 +1,38 @@
-name: Publish to npm
+name: Release components package
 
 on:
+  release:
+    types: [published]
+
   push:
     branches:
       - main
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. GitHub 저장소 코드 체크아웃
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # 2. Node.js 환경 설정
-      - uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
         with:
-          node-version: 18
-          cache: 'pnpm'
-          registry-url: https://registry.npmjs.org/
+          version: 8
+          run_install: false
 
-      # 3. Corepack을 통한 pnpm 설치
-      - run: corepack enable
-      - run: corepack prepare pnpm@latest --activate
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
 
-      # 4. pnpm 의존성 설치 (캐시 정리 포함)
-      - run: pnpm store prune
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      # 5. 빌드 수행
-      - name: Verify pnpm and dependencies
-        run: |
-          pnpm --version
-          pnpm list
-      - run: pnpm run build
-
-      # 6. npm 배포
-      - run: pnpm publish --access public
+      - name: Publish 🚀
+        shell: bash
+        run: pnpm publish packages/components --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
