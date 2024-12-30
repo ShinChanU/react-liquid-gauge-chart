@@ -8,15 +8,29 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     steps:
+      # 1. GitHub 저장소 코드 체크아웃
       - uses: actions/checkout@v3
+
+      # 2. Node.js 환경 설정
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: "pnpm" # pnpm 캐싱 활성화
           registry-url: https://registry.npmjs.org/
+
+      # 3. Corepack으로 pnpm 활성화
       - run: corepack enable
       - run: corepack prepare pnpm@latest --activate
+
+      # 4. pnpm 의존성 설치
+      - run: pnpm install --frozen-lockfile
+
+      # 5. 빌드 수행
       - run: pnpm run build
-      - run: npm publish
+
+      # 6. npm 배포
+      - run: pnpm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
