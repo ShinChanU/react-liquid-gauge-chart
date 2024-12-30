@@ -2,7 +2,12 @@ import * as d3 from "d3";
 import { LIQUID_SVG_PATH } from "./constants";
 import { THelperParams } from "./THelperParams";
 
-export const loadLiquidChart = ({ config, element, value }: THelperParams) => {
+export const loadLiquidChart = ({
+  config,
+  element,
+  value,
+  elementId,
+}: THelperParams) => {
   d3.select(element).selectAll("g").remove(); // remove before render group
 
   const gauge = d3.select(element); // 게이지 요소 선택
@@ -60,6 +65,10 @@ export const loadLiquidChart = ({ config, element, value }: THelperParams) => {
     .range([radius * 2, textPixels * 0.7])
     .domain([0, 1]);
 
+  const createGradientId = (gradientId: string) => {
+    return `${gradientId}-${elementId}`;
+  };
+
   //
   // 그라디언트 정의 함수
   const defineGradient = (
@@ -70,7 +79,7 @@ export const loadLiquidChart = ({ config, element, value }: THelperParams) => {
   ) => {
     const gradient = defs
       .append("linearGradient")
-      .attr("id", id)
+      .attr("id", createGradientId(id))
       .attr("x1", "0%")
       .attr("y1", "0%")
       .attr("x2", "100%")
@@ -81,10 +90,13 @@ export const loadLiquidChart = ({ config, element, value }: THelperParams) => {
 
   // 색상 선택 함수
   const getColor = (value: number) => {
-    if (value <= 25) return "url(#gradient1)";
-    if (value <= 50) return "url(#gradient2)";
-    if (value <= 75) return "url(#gradient3)";
-    return "url(#gradient4)";
+    if (config.fixedColor) {
+      return `url(#${createGradientId("gradient1")})`;
+    }
+    if (value <= 25) return `url(#${createGradientId("gradient1")})`;
+    if (value <= 50) return `url(#${createGradientId("gradient2")})`;
+    if (value <= 75) return `url(#${createGradientId("gradient3")})`;
+    return `url(#${createGradientId("gradient4")})`;
   };
 
   // 게이지 그룹 생성
@@ -98,30 +110,45 @@ export const loadLiquidChart = ({ config, element, value }: THelperParams) => {
     unknown
   >;
 
-  defineGradient(
-    defs,
-    "gradient1",
-    config.colorRange.gradient1.start,
-    config.colorRange.gradient1.end
-  );
-  defineGradient(
-    defs,
-    "gradient2",
-    config.colorRange.gradient2.start,
-    config.colorRange.gradient2.end
-  );
-  defineGradient(
-    defs,
-    "gradient3",
-    config.colorRange.gradient3.start,
-    config.colorRange.gradient3.end
-  );
-  defineGradient(
-    defs,
-    "gradient4",
-    config.colorRange.gradient4.start,
-    config.colorRange.gradient4.end
-  );
+  // fixed gradient
+  if (config.fixedColor) {
+    if (typeof config.fixedColor === "string") {
+      defineGradient(defs, "gradient1", config.fixedColor, config.fixedColor);
+    } else {
+      defineGradient(
+        defs,
+        "gradient1",
+        config.fixedColor.start,
+        config.fixedColor.end
+      );
+    }
+  } else {
+    defineGradient(
+      defs,
+      "gradient1",
+      config.colorRange.gradient1.start,
+      config.colorRange.gradient1.end
+    );
+    defineGradient(
+      defs,
+      "gradient2",
+      config.colorRange.gradient2.start,
+      config.colorRange.gradient2.end
+    );
+    defineGradient(
+      defs,
+      "gradient3",
+      config.colorRange.gradient3.start,
+      config.colorRange.gradient3.end
+    );
+    defineGradient(
+      defs,
+      "gradient4",
+      config.colorRange.gradient4.start,
+      config.colorRange.gradient4.end
+    );
+  }
+
   defineGradient(
     defs,
     "outerFillGradient",
@@ -136,7 +163,7 @@ export const loadLiquidChart = ({ config, element, value }: THelperParams) => {
     .attr("d", containerPath)
     .attr("stroke-width", 1)
     .attr("transform", `translate(${0},${0})`)
-    .style("fill", "url(#outerFillGradient)");
+    .style("fill", `url(#${createGradientId("outerFillGradient")})`);
 
   // 텍스트 생성
   const text1 = gaugeGroup

@@ -4,4 +4,5 @@ export type THelperParams = {
   config: TLiquidChart;
   element: SVGSVGElement;
   value: number;
+  elementId: string;
 };

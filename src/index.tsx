@@ -20,9 +20,10 @@ const LiquidChart = ({ value, ...configProps }: TProps) => {
         value,
         config: gaugeConfig,
         element: gaugeRef.current,
+        elementId,
       }); // 게이지 로드 함수 호출
     }
-  }, [gaugeConfig, value]);
+  }, [elementId, gaugeConfig, value]);
 
   return (
     <svg

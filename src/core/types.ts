@@ -11,6 +11,7 @@ export type TLiquidChart = {
     gradient3: TLiquidColorSet;
     gradient4: TLiquidColorSet;
   };
+  fixedColor?: string | TLiquidColorSet;
   maxValue: number;
   minValue: number;
   outerFillGradient: TLiquidColorSet;

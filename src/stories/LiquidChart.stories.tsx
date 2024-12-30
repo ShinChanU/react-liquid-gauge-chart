@@ -59,6 +59,8 @@ export const All = () => {
       />
       <LiquidChart waveCount={1.5} waveHeight={0.1} textSize={0.7} value={60} />
       <LiquidChart waveCount={1.5} waveHeight={0.1} textSize={0.7} value={85} />
+      <div>Fixed Color</div>
+      <LiquidChart fixedColor={"#123123"} value={50} />
     </div>
   );
 };
