@@ -17,17 +17,22 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'pnpm' # pnpm 캐싱 활성화
+          cache: 'pnpm'
           registry-url: https://registry.npmjs.org/
 
-      # 3. pnpm 설치
-      - name: Install pnpm
-        run: npm install -g pnpm
+      # 3. Corepack을 통한 pnpm 설치
+      - run: corepack enable
+      - run: corepack prepare pnpm@latest --activate
 
-      # 4. pnpm 의존성 설치
+      # 4. pnpm 의존성 설치 (캐시 정리 포함)
+      - run: pnpm store prune
       - run: pnpm install --frozen-lockfile
 
       # 5. 빌드 수행
+      - name: Verify pnpm and dependencies
+        run: |
+          pnpm --version
+          pnpm list
       - run: pnpm run build
 
       # 6. npm 배포
