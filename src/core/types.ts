@@ -31,4 +31,5 @@ export type TLiquidChart = {
   waveRiseTime: number;
   waveTextColor: string;
   size: number;
+  format?: (value: number) => string | number;
 };

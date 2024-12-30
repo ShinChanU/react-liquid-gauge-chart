@@ -36,7 +36,13 @@ export const loadLiquidChart = ({
   const waveClipWidth = waveLength * waveClipCount;
 
   // 값을 정수로 표시하는 반올림 함수
-  const textRounder = (value: number) => Math.round(value);
+  const onFormatValue = (value: number) => {
+    if (config.format) {
+      return config.format(value);
+    }
+
+    return Math.round(value);
+  };
 
   // 클립 파동 영역을 구성하기 위한 데이터
   const data: { x: number; y: number }[] = [];
@@ -237,7 +243,7 @@ export const loadLiquidChart = ({
         textFinalValue
       );
       return function (this: SVGTextElement, t: number) {
-        this.textContent = textRounder(i(t)) + unitText;
+        this.textContent = onFormatValue(i(t)) + unitText;
       };
     };
     text1.transition().duration(config.waveRiseTime!).tween("text", textTween);
