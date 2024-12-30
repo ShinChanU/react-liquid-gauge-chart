@@ -1,6 +1,14 @@
 {
   "name": "react-liquid-gauge-chart",
   "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShinChanU/react-liquid-gauge-chart.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ShinChanU/react-liquid-gauge-chart/issues"
+  },
+  "homepage": "https://github.com/ShinChanU/react-liquid-gauge-chart#readme",
   "type": "module",
   "main": "dist/react-liquid-gauge-chart.umd.js",
   "module": "dist/react-liquid-gauge-chart.es.js",
